@@ -78,7 +78,7 @@ class DBStorage:
     def get(self, cls, id):
         """Returns the object based on the class and its ID,
         or None if not found"""
-        for object_to_check in self.__session.query(classes[cls]).all():
+        for object_to_check in self.__session.query(cls).all():
             if object_to_check.id == id:
                 return object_to_check
         return None
@@ -88,10 +88,6 @@ class DBStorage:
         the given class. If no class is passed,
         returns the count of all objects in storage."""
         if cls:
-            #classes_to_check = {cls: classes.get(cls)}
-            return len(self.__session.query(classes[cls]).all())
+            return len(self.__session.query(cls).all())
         else:
-            len(self.__session.query(classes_).all()
-        # counter = 0
-        # for clase_auxiliar in classes_to_check:
-        #     counter += len(self.__session.query(classes_).all())
+            return len(self.all())
