@@ -7,29 +7,43 @@ from models import storage
 from models.state import State
 
 @app_views.route("/states", methods=['GET'], strict_slashes=False)
-def get_task():
-    """show all states"""
+def get__task():
+    """Show States"""
     states = []
     for state in storage.all('State').values():
         states.append(state.to_dict())
-        return jsonify(states)
+    return jsonify(states)
+
 
 @app_views.route("/states/<state_id>", methods=['GET'], strict_slashes=False)
 def get__task_id(state_id):
-    """get states id"""
-    state_permision = storage.get('State', state_id)
-    if state_permision is None:
+    """Get id of a task"""
+    state_arr = storage.get('State', state_id)
+    if state_arr is None:
         abort(404)
     else:
-        return jsonify(state_permision.to_dict())
+        return jsonify(state_arr.to_dict())
 
-@app_views.route("/states/<state_id>", methods=['DELETE'], strict_slashes=False)
+
+@app_views.route("/states/<state_id>", methods=['DELETE'],
+                 strict_slashes=False)
 def get__task_delete(state_id):
-    """delete task"""
-    state_permision = storage.get('State', state_id)
-    if state_permision is None:
+    """Delete task"""
+    state_arr = storage.get('State', state_id)
+    if state_arr is None:
         abort(404)
     else:
-        storage.delete(state_permision)
+        storage.delete(state_arr)
         storage.save()
         return jsonify({}), 200
+
+@app_views.route("/states", methods=['POST'], strict_slashes=False)
+def set__task_POST():
+    """Create a new object"""
+
+
+
+
+@app_views.route("/states/<state_id>", methods=['PUT'], strict_slashes=False)
+def set__task_PUT(state_id):
+    """ Updates a State object """
