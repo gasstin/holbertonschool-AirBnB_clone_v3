@@ -10,11 +10,11 @@ app = Flask(__name__)
 app.register_blueprint(app_views)
 
 
-@app.teardown_appcontext
+@app.teardownappcontext
 def close_function(exit):
     storage.close()
 
-@app.error_handler(404)
+@app.errorhandler(404)
 def error_notfound(error):
     """returns a json-format 404 status"""
     return jsonify({"error": "Not found"}), 404
