@@ -70,7 +70,7 @@ def create_place(city_id):
 
 @app_views.route('/api/v1/places/<place_id>',
                  methods=['PUT'], strict_slashes=False)
-def create_place(place_id):
+def update_place(place_id):
     """
         Updates a Place
     """
