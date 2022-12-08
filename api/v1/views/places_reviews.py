@@ -61,9 +61,9 @@ def create_review(place_id):
     data = request.get_json()
     if not data:
         abort(404, description='Not a JSON')
-    if 'user_id' not in data.keys():
+    if 'user_id' not in data:
         abort(400, description='Missing user_id')
-    if 'text' not in data.keys():
+    if 'text' not in data:
         abort(400, description='Missing text')
     for place in storage.all(Place).values():
         if place.id == place_id:  # si encuentra una ciudad

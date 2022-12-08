@@ -10,6 +10,7 @@ def status():
     """ return the status of your API """
     return jsonify({'status': 'OK'})
 
+
 @app_views.route('/stats')
 def num_obj_bytype():
     """endpoint that retrives the number"""

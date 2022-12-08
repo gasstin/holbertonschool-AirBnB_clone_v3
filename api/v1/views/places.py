@@ -57,6 +57,7 @@ def create_place(city_id):
     """
     from models.user import User
     first_check = storage.get(City, city_id)
+    return jsonify(first_check)
     if not first_check:
         abort(404)
     data = request.get_json()
