@@ -44,6 +44,7 @@ def delete_place(place_id):
     for place in storage.all(Place).values():
         if place.id == place_id:
             storage.delete(place)  # delete the place
+            storage.save()
             return make_response(jsonify({}), 200)
     abort(404)
 
@@ -81,11 +82,13 @@ def update_place(place_id):
     data = request.get_json()
     if not data:
         abort(400, 'Not a JSON')
+    list_to_ignore = ['id', 'user_id', 'place_id',
+                      'created_at', 'update_at', 'city_id']
     for place in storage.all(Place).values():
         if place.id == place_id:  # si encuentro un place
             for k, v in data.items():
-                if k not in ['id', 'created_at', 'update_at', 'city_id']:
-                    place.k = v
+                if k not in list_to_ignore:
+                    setattr(place, k, v)
             storage.save()  # saves the changes
             return make_response(jsonify(place.to_dict()), 200)
     abort(404)

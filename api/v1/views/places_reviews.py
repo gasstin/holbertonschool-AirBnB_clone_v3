@@ -14,9 +14,10 @@ def all_reviews_of_place(place_id):
         Retrieves the list of all Place objects of a City
     """
     for place in storage.all(Place).values():
-        if place.id == place_id:
-            list_of_reviews = [review.to_dict() for review in storage.all(Review)
-                              if review.place_id == place_id]
+        if place.id == place_id:  # if find a place
+            list_of_reviews = [review.to_dict() for review
+                               in storage.all(Review).values()
+                               if review.place_id == place_id]
             return jsonify(list_of_reviews)
     abort(404)
 
@@ -27,7 +28,7 @@ def all_reviews(review_id):
     """
         Retrieves a Review object
     """
-    for review in storage.all(Review):
+    for review in storage.all(Review).values():
         if review.id == review_id:
             return jsonify(review.to_dict())
     abort(404)
@@ -39,9 +40,10 @@ def delete_review(review_id):
     """
         Deletes a Review object
     """
-    for review in storage.all(Review):
+    for review in storage.all(Review).values():
         if review.id == review_id:
             storage.delete(review)
+            storage.save()
             return make_response(jsonify({}), 200)
     abort(404)
 
@@ -81,11 +83,11 @@ def update_place(review_id):
         abort(400, 'Not a JSON')
     list_to_ignore = ['id', 'user_id', 'place_id',
                       'created_at', 'update_at', 'city_id']
-    for review in storage.all(Review):
+    for review in storage.all(Review).values():
         if review.id == review_id:  # if match the review
             for k, v in data.items():
                 if k not in list_to_ignore:
-                    review.k = v
+                    setattr(review, k, v)
             storage.save()  # saves the changes
             return make_response(jsonify(review.to_dict(), 200))
     abort(404)
