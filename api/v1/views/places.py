@@ -59,20 +59,19 @@ def create_place(city_id):
     first_check = storage.get(City, city_id)
     if not first_check:
         abort(404)
-    if not request.is_json(silent=True):
-        abort(400, description="Not a JSON")
-    data = request.get_json(silent=True)
+    if not request.is_json():
+        make_response(jsonify({'error': 'Not a JSON'}), 400)
+    data = request.get_json()
     if 'user_id' not in data:
-        abort(400, description="Missing user_id")
+        make_response(jsonify({'error': 'Missing user_id'}), 400)
     if 'name' not in data:
-        abort(400, description="Missing name")
+        make_response(jsonify({'error': 'Missing name'}), 400)
     for city in storage.all(City).values():
         if city.id == city_id:  # si encuentra una ciudad
             for user in storage.all(User).values():
                 if user.id == data['user_id']:  # si encuentra un usuario
                     place = Place(**data)
-                    storage.new(place)
-                    storage.save()
+                    place.save()
                     return make_response(jsonify(place.to_dict()), 201)
     abort(404)
 
