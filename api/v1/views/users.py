@@ -11,8 +11,8 @@ def get_user():
     """Retrieves the list of all User """
     all_user = storage.all(User).values()
     list_users = []
-    for users in all_user:
-        list_users.apppend(users.to_dict())
+    for user in all_user:
+        list_users.apppend(user.to_dict())
     return jsonify(list_users)
 
 @app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
