@@ -57,11 +57,11 @@ def create_review(place_id):
     from models.user import User
     data = request.get_json()
     if not data:
-        abort(404, 'Not a JSON')
-    if 'user_id' not in data:
-        abort(400, 'Missing user_id')
-    if 'text' not in data:
-        abort(400, 'Missing text')
+        abort(404, description='Not a JSON')
+    if 'user_id' not in data.keys():
+        abort(400, description='Missing user_id')
+    if 'text' not in data.keys():
+        abort(400, description='Missing text')
     for place in storage.all(Place).values():
         if place.id == place_id:  # si encuentra una ciudad
             for user in storage.all(User):
@@ -80,7 +80,7 @@ def update_place(review_id):
     """
     data = request.get_json()
     if not data:
-        abort(400, 'Not a JSON')
+        abort(400, description='Not a JSON')
     list_to_ignore = ['id', 'user_id', 'place_id',
                       'created_at', 'update_at', 'city_id']
     for review in storage.all(Review).values():
