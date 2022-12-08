@@ -71,7 +71,8 @@ def create_place(city_id):
             for user in storage.all(User).values():
                 if user.id == data['user_id']:  # si encuentra un usuario
                     place = Place(**data)
-                    place.save()
+                    storage.new(place)
+                    storage.save()
                     return make_response(jsonify(place.to_dict()), 201)
     abort(404)
 
