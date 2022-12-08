@@ -49,7 +49,7 @@ def delete_place(place_id):
     abort(404)
 
 
-@app_views.route('/cities/<city_id>/places',
+@app_views.route('/cities/<string:city_id>/places',
                  methods=['POST'], strict_slashes=False)
 def create_place(city_id):
     """
@@ -70,6 +70,7 @@ def create_place(city_id):
         if city.id == city_id:  # si encuentra una ciudad
             for user in storage.all(User).values():
                 if user.id == data['user_id']:  # si encuentra un usuario
+                    data['city_id'] = city_id
                     place = Place(**data)
                     place.save()
                     return make_response(jsonify(place.to_dict()), 201)
