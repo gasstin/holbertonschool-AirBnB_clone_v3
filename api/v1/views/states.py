@@ -40,6 +40,15 @@ def get__task_delete(state_id):
 @app_views.route("/states", methods=['POST'], strict_slashes=False)
 def set__task_POST():
     """Create a new object"""
+    request = request.get_json()
+    if request is None:
+        return jsonify({"Error": "Not a JSON"}), 400
+    elif 'name' not in request.keys():
+        return jsonify({"Error": "Missing name"}), 400
+    else:
+        state__post = State(**request)
+        state__post.save()
+        return jsonify(state__post.to_dict()), 201
 
 
 
@@ -47,3 +56,14 @@ def set__task_POST():
 @app_views.route("/states/<state_id>", methods=['PUT'], strict_slashes=False)
 def set__task_PUT(state_id):
     """ Updates a State object """
+    state_storage = storage.get('State', state_id)
+    request = request.get_json()
+    if request is None:
+        return jsonify({"Error": "Not a JSON"}), 400
+    if state_storage is None:
+        abort(400)
+    else:
+        if 'name' in request:
+            storage.get(State, state_id).name = request['name']
+            storage.get(State, state_id).save()
+            return jsonify(state_storage.to_dict()), 200
