@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """State objects that handles all default RESTFul API actions"""
 
-from flask import Flask, jsonify, abort, request
+from flask import Flask, jsonify, abort, request, make_response
 from api.v1.views import app_views
 from models import storage
 from models.state import State
@@ -37,33 +37,41 @@ def get__task_delete(state_id):
         storage.save()
         return jsonify({}), 200
 
-@app_views.route("/states", methods=['POST'], strict_slashes=False)
-def set__task_POST():
-    """Create a new object"""
-    request = request.get_json()
-    if request is None:
-        return jsonify({"Error": "Not a JSON"}), 400
-    elif 'name' not in request.keys():
-        return jsonify({"Error": "Missing name"}), 400
-    else:
-        state__post = State(**request)
-        state__post.save()
-        return jsonify(state__post.to_dict()), 201
+@app_views.route('/states', methods=['POST'], strict_slashes=False)
+def post_state():
+    """
+    Creates a State
+    """
+    if not request.get_json():
+        abort(400, description="Not a JSON")
+
+    if 'name' not in request.get_json():
+        abort(400, description="Missing name")
+
+    data = request.get_json()
+    instance = State(**data)
+    instance.save()
+    return make_response(jsonify(instance.to_dict()), 201)
 
 
+@app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
+def put_state(state_id):
+    """
+    Updates a State
+    """
+    state = storage.get(State, state_id)
 
+    if not state:
+        abort(404)
 
-@app_views.route("/states/<state_id>", methods=['PUT'], strict_slashes=False)
-def set__task_PUT(state_id):
-    """ Updates a State object """
-    state_storage = storage.get('State', state_id)
-    request = request.get_json()
-    if request is None:
-        return jsonify({"Error": "Not a JSON"}), 400
-    if state_storage is None:
-        abort(400)
-    else:
-        if 'name' in request:
-            storage.get(State, state_id).name = request['name']
-            storage.get(State, state_id).save()
-            return jsonify(state_storage.to_dict()), 200
+    if not request.get_json():
+        abort(400, description="Not a JSON")
+
+    ignore = ['id', 'created_at', 'updated_at']
+
+    data = request.get_json()
+    for key, value in data.items():
+        if key not in ignore:
+            setattr(state, key, value)
+    storage.save()
+    return make_response(jsonify(state.to_dict()), 200)
