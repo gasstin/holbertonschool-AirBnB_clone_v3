@@ -21,4 +21,4 @@ def get_amenity(amenities_id):
     if not amenities_get:
         abort(404)
     else:
-        return jsonify(amenities_get.to_dict)
+        return jsonify(amenities_get.to_dict())
