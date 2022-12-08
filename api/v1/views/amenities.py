@@ -22,3 +22,13 @@ def get_amenity(amenities_id):
         abort(404)
     else:
         return jsonify(amenities_get.to_dict())
+
+@app_views.record('/amenities/<amenity_id>', methods=['DELETE'], strict_slashes=False)
+def delete_amenity(amenities_id):
+    """deletes amenities objetcs"""
+    amenity_get = storage.get(Amenity, amenities_id)
+    if not amenity_get:
+        abort(404)
+    storage.delete(amenity_get)
+    storage.save
+    return make_response(jsonify({}), 200)
