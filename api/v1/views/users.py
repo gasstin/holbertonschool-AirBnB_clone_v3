@@ -51,7 +51,7 @@ def post_user(user_id):
 def put_user(user_id):
     """Update Users"""
     if not request.get_json():
-        abort(404, description="Not a JSON")
+        abort(400, description="Not a JSON")
     ignore = ['id', 'created_at', 'updated_at', 'email']
     users =storage.get(User, user_id)
     if not users:
