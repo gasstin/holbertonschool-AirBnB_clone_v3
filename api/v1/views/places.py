@@ -4,6 +4,7 @@ from api.v1.views import app_views
 from flask import abort, jsonify, request, make_response
 from models.city import City
 from models.place import Place
+from models.user import User
 from models import storage
 
 
@@ -52,10 +53,6 @@ def delete_place(place_id):
 @app_views.route('/cities/<string:city_id>/places',
                  methods=['POST'], strict_slashes=False)
 def create_place(city_id):
-    """
-        Creates a Place
-    """
-    from models.user import User
     first_check = storage.get(City, city_id)
     if not first_check:
         abort(404)
@@ -70,7 +67,6 @@ def create_place(city_id):
         if city.id == city_id:  # si encuentra una ciudad
             for user in storage.all(User).values():
                 if user.id == data['user_id']:  # si encuentra un usuario
-                    data['city_id'] = city_id
                     place = Place(**data)
                     place.save()
                     return make_response(jsonify(place.to_dict()), 201)
