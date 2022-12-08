@@ -55,6 +55,9 @@ def create_review(place_id):
         Creates a Place
     """
     from models.user import User
+    first_check = storage.get(Place, place_id)
+    if not first_check:
+        abort(404)
     data = request.get_json()
     if not data:
         abort(404, description='Not a JSON')
@@ -69,7 +72,6 @@ def create_review(place_id):
                     review = Review(**data)  # Create a review
                     review.save()
                     return make_response(jsonify(review.to_dict()), 201)
-    abort(404)
 
 
 @app_views.route('reviews/<review_id>',
@@ -78,7 +80,10 @@ def update_place(review_id):
     """
         Updates a Place
     """
-    data = request.get_json()
+    first_check = storage.get(Review, review_id)
+    if not first_check:
+        abort(404)
+    data = request.get_json()    
     if not data:
         abort(400, description='Not a JSON')
     list_to_ignore = ['id', 'user_id', 'place_id',

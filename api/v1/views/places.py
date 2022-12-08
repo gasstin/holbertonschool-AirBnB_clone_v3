@@ -56,6 +56,9 @@ def create_place(city_id):
         Creates a Place
     """
     from models.user import User
+    first_check = storage.get(City, city_id)
+    if not first_check:
+        abort(404)
     data = request.get_json()
     if not data:
         abort(404, description='Not a JSON')
@@ -70,7 +73,6 @@ def create_place(city_id):
                     place = Place(**data)
                     place.save()
                     return make_response(jsonify(place.to_dict()), 201)
-    abort(404)
 
 
 @app_views.route('/places/<place_id>',
@@ -79,6 +81,9 @@ def update_place(place_id):
     """
         Updates a Place
     """
+    first_check = storage.get(Place, place_id)
+    if not first_check:
+        abort(404)
     data = request.get_json()
     if not data:
         abort(400, description='Not a JSON')
@@ -91,4 +96,3 @@ def update_place(place_id):
                     setattr(place, k, v)
             storage.save()  # saves the changes
             return make_response(jsonify(place.to_dict()), 200)
-    abort(404)
