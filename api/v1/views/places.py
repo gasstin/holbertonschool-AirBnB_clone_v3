@@ -61,11 +61,11 @@ def create_place(city_id):
         abort(404)
     data = request.get_json()
     if not data:
-        abort(404, description='Not a JSON')
-    if 'user_id' not in data.keys():
-        abort(400, description='Missing user_id')
-    if 'name' not in data.keys():
-        abort(400, description='Missing name')
+        abort(400, description="Not a JSON")
+    if 'user_id' not in data:
+        abort(400, description="Missing user_id")
+    if 'name' not in data:
+        abort(400, description="Missing name")
     for city in storage.all(City).values():
         if city.id == city_id:  # si encuentra una ciudad
             for user in storage.all(User).values():
