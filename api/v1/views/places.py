@@ -71,6 +71,7 @@ def create_place(city_id):
         abort(404)
     for city in storage.all(City).values():
         if city.id == city_id:  # si encuentra una ciudad
+                data['city_id'] = city_id
                 place = Place(**data)
                 place.save()
                 return make_response(jsonify(place.to_dict()), 201)

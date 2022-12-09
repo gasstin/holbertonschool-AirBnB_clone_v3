@@ -61,15 +61,16 @@ def create_review(place_id):
     if not request.is_json():
         abort(404, description='Not a JSON')
     if 'user_id' not in request.get_json():
-        make_response(jsonify({'error': 'Missing user_id'}), 400)
+        abort(400, description='Missing user_id')
     if 'text' not in request.get_json():
-        make_response(jsonify({'error': 'Missing text'}), 400)
+        abort(400, description='Missing text')
     data = request.get_json()
     user_check = storage.get(User, data['user_id'])
     if not user_check:  # check if the user exists
         abort(404)
     for place in storage.all(Place).values():
-        if place.id == place_id:  # si encuentra una ciudad
+        if place.id == place_id:  # si encuentra un place
+                data['place_id'] = place_id
                 review = Review(**data)  # Create a review
                 review.save()
                 return make_response(jsonify(review.to_dict()), 201)
