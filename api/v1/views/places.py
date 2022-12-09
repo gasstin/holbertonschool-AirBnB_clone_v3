@@ -56,23 +56,24 @@ def create_place(city_id):
         Creates a Place
     """
     from models.user import User
-    first_check = storage.get(City, city_id)
-    if not first_check:
+    city_check = storage.get(City, city_id)
+    if not city_check:
         abort(404)
-    if not request.is_json():
-        make_response(jsonify({'error': 'Not a JSON'}), 400)
+    if not request.get_json():
+        abort(400, description="Not a JSON")
     if 'user_id' not in request.get_json():
-        make_response(jsonify({'error': 'Missing user_id'}), 400)
+        abort(400, description="Missing user_id")
     if 'name' not in request.get_json():
-        make_response(jsonify({'error': 'Missing name'}), 400)
+        abort(400, description="Missing name")
     data = request.get_json()
+    user_check = storage.get(User, data['user_id'])
+    if not user_check:  # check the user.id
+        abort(404)
     for city in storage.all(City).values():
         if city.id == city_id:  # si encuentra una ciudad
-            for user in storage.all(User).values():
-                if user.id == data['user_id']:  # si encuentra un usuario
-                    place = Place(**data)
-                    place.save()
-                    return make_response(jsonify(place.to_dict()), 201)
+                place = Place(**data)
+                place.save()
+                return make_response(jsonify(place.to_dict()), 201)
     abort(404)
 
 

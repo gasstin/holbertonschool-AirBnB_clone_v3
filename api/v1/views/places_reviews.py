@@ -55,8 +55,8 @@ def create_review(place_id):
         Creates a Place
     """
     from models.user import User
-    first_check = storage.get(Place, place_id)
-    if not first_check:
+    place_check = storage.get(Place, place_id)
+    if not place_check:
         abort(404)
     if not request.is_json():
         abort(404, description='Not a JSON')
@@ -65,13 +65,14 @@ def create_review(place_id):
     if 'text' not in request.get_json():
         make_response(jsonify({'error': 'Missing text'}), 400)
     data = request.get_json()
+    user_check = storage.get(User, data['user_id'])
+    if not user_check:  # check if the user exists
+        abort(404)
     for place in storage.all(Place).values():
         if place.id == place_id:  # si encuentra una ciudad
-            for user in storage.all(User):
-                if user.id == data['user_id']:  # si encuentra un usuario
-                    review = Review(**data)  # Create a review
-                    review.save()
-                    return make_response(jsonify(review.to_dict()), 201)
+                review = Review(**data)  # Create a review
+                review.save()
+                return make_response(jsonify(review.to_dict()), 201)
     abort(404)
 
 
