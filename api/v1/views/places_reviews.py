@@ -77,7 +77,7 @@ def create_review(place_id):
     abort(404)
 
 
-@app_views.route('reviews/<review_id>',
+@app_views.route('reviews/<string:review_id>',
                  methods=['PUT'], strict_slashes=False)
 def update_review(review_id):
     """
@@ -89,10 +89,10 @@ def update_review(review_id):
     if not request.get_json():
         abort(400, description='Not a JSON')
     list_to_ignore = ['id', 'user_id', 'place_id',
-                      'created_at', 'update_at']
+                      'created_at', 'update_at', 'review_id']
     data = request.get_json()
     for k, v in data.items():
         if k not in list_to_ignore:
             setattr(review_check, k, v)
     storage.save()  # saves the changes
-    return make_response(jsonify(review_check.to_dict(), 200))
+    return make_response(jsonify(review_check.to_dict()), 200)
