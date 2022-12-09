@@ -58,13 +58,13 @@ def create_review(place_id):
     first_check = storage.get(Place, place_id)
     if not first_check:
         abort(404)
-    data = request.get_json()
-    if not data:
+    if not request.is_json():
         abort(404, description='Not a JSON')
-    if 'user_id' not in data:
-        abort(400, description='Missing user_id')
-    if 'text' not in data:
-        abort(400, description='Missing text')
+    if 'user_id' not in request.get_json():
+        make_response(jsonify({'error': 'Missing user_id'}), 400)
+    if 'text' not in request.get_json():
+        make_response(jsonify({'error': 'Missing text'}), 400)
+    data = request.get_json()
     for place in storage.all(Place).values():
         if place.id == place_id:  # si encuentra una ciudad
             for user in storage.all(User):
@@ -84,7 +84,7 @@ def update_review(review_id):
     first_check = storage.get(Review, review_id)
     if not first_check:
         abort(404)
-    data = request.get_json()    
+    data = request.get_json()
     if not data:
         abort(400, description='Not a JSON')
     list_to_ignore = ['id', 'user_id', 'place_id',

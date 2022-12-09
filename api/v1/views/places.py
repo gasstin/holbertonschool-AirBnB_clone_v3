@@ -4,7 +4,6 @@ from api.v1.views import app_views
 from flask import abort, jsonify, request, make_response
 from models.city import City
 from models.place import Place
-from models.user import User
 from models import storage
 
 
@@ -53,16 +52,20 @@ def delete_place(place_id):
 @app_views.route('/cities/<string:city_id>/places',
                  methods=['POST'], strict_slashes=False)
 def create_place(city_id):
+    """
+        Creates a Place
+    """
+    from models.user import User
     first_check = storage.get(City, city_id)
     if not first_check:
         abort(404)
     if not request.is_json():
         make_response(jsonify({'error': 'Not a JSON'}), 400)
-    data = request.get_json()
-    if 'user_id' not in data:
+    if 'user_id' not in request.get_json():
         make_response(jsonify({'error': 'Missing user_id'}), 400)
-    if 'name' not in data:
+    if 'name' not in request.get_json():
         make_response(jsonify({'error': 'Missing name'}), 400)
+    data = request.get_json()
     for city in storage.all(City).values():
         if city.id == city_id:  # si encuentra una ciudad
             for user in storage.all(User).values():
