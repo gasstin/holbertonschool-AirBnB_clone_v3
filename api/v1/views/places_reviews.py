@@ -83,19 +83,16 @@ def update_review(review_id):
     """
         Updates a Place
     """
-    first_check = storage.get(Review, review_id)
-    if not first_check:
+    review_check = storage.get(Review, review_id)  # check the review
+    if not review_check:
         abort(404)
     if not request.get_json():
         abort(400, description='Not a JSON')
     list_to_ignore = ['id', 'user_id', 'place_id',
                       'created_at', 'update_at']
     data = request.get_json()
-    for review in storage.all(Review).values():
-        if review.id == review_id:  # if match the review
-            for k, v in data.items():
-                if k not in list_to_ignore:
-                    setattr(review, k, v)
-            storage.save()  # saves the changes
-            return make_response(jsonify(review.to_dict(), 200))
-    abort(404)
+    for k, v in data.items():
+        if k not in list_to_ignore:
+            setattr(review_check, k, v)
+    storage.save()  # saves the changes
+    return make_response(jsonify(review_check.to_dict(), 200))
